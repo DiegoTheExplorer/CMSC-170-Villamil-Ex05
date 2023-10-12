@@ -1,0 +1,4 @@
+*Remember to use the decimal datatype for precision
+*If not decimal then use ln from math
+
+*use open(encoding='latin-1') or open(encoding='ISO-8859-1')
