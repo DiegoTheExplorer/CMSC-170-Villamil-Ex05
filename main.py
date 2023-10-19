@@ -13,9 +13,9 @@ def classify(kTxt, spam, ham, messages):
   pSpam = (spam.totalWords + k) / (spam.totalWords + ham.totalWords) + 2 * k
   pHam = (ham.totalWords + k) / (spam.totalWords + ham.totalWords) + 2 * k
 
-  
-  for message in messages:
-    
+  for filename in messages:
+    file = open(filename, encoding='ISO-8859-1')
+    messageBow = bow.Bow(filename)
 
   return
 
@@ -42,7 +42,6 @@ def getFiles(dir, files):
   path = filedialog.askdirectory(initialdir= "data/")
   dir.set(path)
   files = os.listdir(dir.get()) 
-  print(files)
 
   return
 
