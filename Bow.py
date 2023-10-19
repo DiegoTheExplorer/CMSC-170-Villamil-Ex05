@@ -4,16 +4,16 @@ class Bow:
 
   def __init__(self, file):
     self.file = file
-    self.dict = self.makeDict(file)
+    self.dict = {}
     self.totalWords = 0
     self.dictSize = 0
+    self.updateDict(file)
 
-  def makeDict(self, file):
+  def updateDict(self, file):
     tokens = []
-    dictionary = {}
     totalWords = 0
 
-    fp = open(file)
+    fp = open(file, encoding='ISO-8859-1')
 
     #tokenize
     for line in fp:
@@ -34,12 +34,12 @@ class Bow:
     for tkn in tokens:
       if(tkn == ""):
         tokens.remove(tkn)
-      elif(tkn in dictionary):
-        dictionary[tkn] += 1
+      elif(tkn in self.dict):
+        self.dict[tkn] += 1
       else:
-        dictionary[tkn] = 1
+        self.dict[tkn] = 1
     
-    self.totalWords = totalWords
-    self.dictSize = len(dictionary)
+    self.totalWords = self.totalWords + totalWords
+    self.dictSize = len(self.dict)
 
-    return dictionary
+    return 
