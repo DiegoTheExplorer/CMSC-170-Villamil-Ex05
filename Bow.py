@@ -13,6 +13,10 @@ class Bow:
     tokens = []
     totalWords = 0
 
+    if(file == None):
+      print("Created an empty bag of words")
+      return
+  
     fp = open(file, encoding='ISO-8859-1')
 
     #tokenize

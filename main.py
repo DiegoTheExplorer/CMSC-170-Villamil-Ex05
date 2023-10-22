@@ -8,40 +8,57 @@ import os
 from functools import partial
 from decimal import *
 
-def classify(kTxt, spam, ham, messages):
+def classify(kTxt, spam, ham, messages, msgsPath):
+  missingDirectory = 0
+
+  #check if any of the input directories are missing
+  if(spam.dictSize == 0):
+    missingDirectory += missingDirectory + 1
+    print("No spam folder selected")
+  if(ham.dictSize == 0):
+    missingDirectory += missingDirectory + 1
+    print("No ham folder selected")
+  if(len(classifyFiles) == 0):
+    missingDirectory += missingDirectory + 1
+    print("No classify directory selected")
+  
+  if(missingDirectory > 0):
+    return
+
   k = int(kTxt.get(1.0, "end-1c"))
   pSpam = (spam.totalWords + k) / (spam.totalWords + ham.totalWords) + 2 * k
   pHam = (ham.totalWords + k) / (spam.totalWords + ham.totalWords) + 2 * k
 
   for filename in messages:
-    file = open(filename, encoding='ISO-8859-1')
-    messageBow = bow.Bow(filename)
+    path = msgsPath.get() + "/" + filename
+    file = open(path, encoding='ISO-8859-1')
+    messageBow = bow.Bow(path)
 
   return
 
 def makeBag(dir, bag):
   path = filedialog.askdirectory(initialdir= "data/")
   dir.set(path)
-  files = os.listdir(dir.get())
+  files = os.listdir(dir.get())#gets a list of all the filenames in path
 
+  #for every file update the bag of words
   for file in range(0,len(files)):
     pathToFile = path + "/" + files[file]
-
-    if(file == 0):
-      bag = bow.Bow(pathToFile)
-    else:
-      bag.updateDict(pathToFile)
+    bag.updateDict(pathToFile)
   
-  print(path)
-  print("Dictionary size: ", bag.dictSize)
-  print("Total number of words: ", bag.totalWords)
+  # print(path)
+  # print("Dictionary size: ", bag.dictSize)
+  # print("Total number of words: ", bag.totalWords)
 
   return
 
 def getFiles(dir, files):
   path = filedialog.askdirectory(initialdir= "data/")
   dir.set(path)
-  files = os.listdir(dir.get()) 
+
+  #for every message filename in path append to files
+  for message in os.listdir(dir.get()):
+     files.append(message)
 
   return
 
@@ -53,21 +70,21 @@ root.geometry("600x500")
 root.title('Spam Ham')
 
 spamDir = tk.StringVar()
-spamBow = 0
+spamBow = bow.Bow(None)
 fileSelectSpam = tk.Button(root, 
                            text="Select Spam Dir", 
                            command=partial(makeBag, spamDir, spamBow))
 fileSelectSpam.grid(row = 0, column = 0)
 
 hamDir = tk.StringVar()
-hamBow = 0
+hamBow = bow.Bow(None)
 fileSelectHam = tk.Button(root, 
                            text="Select Ham Dir", 
                            command=partial(makeBag, hamDir, hamBow))
 fileSelectHam.grid(row = 0, column = 1)
 
 classifyDir = tk.StringVar()
-classifyFiles = 0
+classifyFiles = []
 fileSelectClassify = tk.Button(root, 
                            text="Select Classify Dir", 
                            command=partial(getFiles, classifyDir, classifyFiles))
@@ -82,7 +99,7 @@ kValInputBox.grid(row = 0, column = 4)
 
 classifyButton = tk.Button(root, 
                            text="Classify", 
-                           command=partial(classify, kValInputBox, spamBow, hamBow, classifyFiles))
+                           command=partial(classify, kValInputBox, spamBow, hamBow, classifyFiles, classifyDir))
 classifyButton.grid(row = 0, column = 5)
 
 root.mainloop()
