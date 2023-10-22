@@ -26,14 +26,47 @@ def classify(kTxt, spam, ham, messages, msgsPath):
     return
 
   k = int(kTxt.get(1.0, "end-1c"))
-  pSpam = (spam.totalWords + k) / (spam.totalWords + ham.totalWords) + 2 * k
-  pHam = (ham.totalWords + k) / (spam.totalWords + ham.totalWords) + 2 * k
+  pSpam = Decimal((spam.totalWords + k) / (spam.totalWords + ham.totalWords) + 2 * k)
+  pHam = Decimal((ham.totalWords + k) / (spam.totalWords + ham.totalWords) + 2 * k)
+  print("pSpam: ", pSpam)
+  print("pHam: ", pHam)
+  k = Decimal(k)
+  pWordgSpam = []
+  pWordgHam = []
 
   for filename in messages:
+    #create a bag of words using words from path
     path = msgsPath.get() + "/" + filename
     file = open(path, encoding='ISO-8859-1')
     messageBow = bow.Bow(path)
 
+    #get the number of new words
+    newWords = 0
+    for word in messageBow.dict:
+      if(word not in spam.dict and word not in ham.dict):
+        newWords = newWords + 1
+    newWordsD = Decimal(newWords)
+
+    for word in messageBow.dict:
+      #calculate P(w|Spam) then append to pWordgSpam
+      if(word in spam.dict):
+        wordInSpam = Decimal(spam.dict[word])
+      else:
+        wordInSpam = Decimal(0)
+      totalWordsSpam = Decimal(spam.totalWords)
+      dictSizeSpam = Decimal(spam.dictSize)
+      pWordgSpam.append((wordInSpam + k) /
+                        (totalWordsSpam) + (k * (dictSizeSpam + newWordsD)))
+      
+      #calculate P(w|Ham) then append to pWordgHam
+      if(word in ham.dict):
+        wordInHam = Decimal(ham.dict[word])
+      else:
+        wordInHam = Decimal(0)
+      totalWordsHam = Decimal(ham.totalWords)
+      dictSizeHam = Decimal(ham.dictSize)
+      pWordgHam.append((wordInHam + k) / 
+                       (totalWordsHam) + (k * (dictSizeHam + newWordsD)))
   return
 
 def makeBag(dir, bag):
