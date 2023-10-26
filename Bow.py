@@ -17,7 +17,7 @@ class Bow:
       print("Created an empty bag of words")
       return
   
-    fp = open(file, encoding='ISO-8859-1')
+    fp = open(file, encoding='latin-1')
 
     #tokenize
     for line in fp:

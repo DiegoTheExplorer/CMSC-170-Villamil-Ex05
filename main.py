@@ -5,6 +5,7 @@ import tkinter as tk
 from tkinter import filedialog
 
 import os
+import numpy
 from functools import partial
 from decimal import *
 
@@ -25,19 +26,35 @@ def classify(kTxt, spam, ham, messages, msgsPath):
   if(missingDirectory > 0):
     return
 
+  print("HAM")
+  print("Dictionary Size: " + str(ham.dictSize))
+  print("Total Number of Words: " + str(ham.totalWords))
+  
+  print("SPAM")
+  print("Dictionary Size: " + str(spam.dictSize))
+  print("Total Number of Words: " + str(spam.totalWords))
+
+  fileOut = open("classify.out", "a", encoding='latin-1')
+  fileOut.truncate(0)
+
   k = int(kTxt.get(1.0, "end-1c"))
   pSpam = Decimal((spam.totalWords + k) / (spam.totalWords + ham.totalWords) + 2 * k)
   pHam = Decimal((ham.totalWords + k) / (spam.totalWords + ham.totalWords) + 2 * k)
-  print("pSpam: ", pSpam)
-  print("pHam: ", pHam)
   k = Decimal(k)
+
   pWordgSpam = []
   pWordgHam = []
+  pMsgSpam = Decimal(0)
+  pMsgHam = Decimal(0)
+  pMsg = Decimal(0)
+  pSpamMsg = Decimal(0)
+  pHamMsg = Decimal(0)
+
 
   for filename in messages:
     #create a bag of words using words from path
     path = msgsPath.get() + "/" + filename
-    file = open(path, encoding='ISO-8859-1')
+    file = open(path, encoding='latin-1')
     messageBow = bow.Bow(path)
 
     #get the number of new words
@@ -67,6 +84,23 @@ def classify(kTxt, spam, ham, messages, msgsPath):
       dictSizeHam = Decimal(ham.dictSize)
       pWordgHam.append((wordInHam + k) / 
                        (totalWordsHam) + (k * (dictSizeHam + newWordsD)))
+    
+    #calculate P(message|Spam) and P(message|Ham)
+    pMsgSpam = numpy.prod(pWordgSpam)
+    pMsgHam = numpy.prod(pWordgHam)
+
+    pMsg = (pMsgHam * pHam) + (pMsgSpam * pSpam)#P(message)
+
+    pSpamMsg = (pMsgSpam * pSpam)/ pMsg
+    pHamMsg = (pMsgHam * pHam)/ pMsg
+    if(pSpamMsg > pHamMsg):
+      stringOut = filename + " SPAM " + str(pSpamMsg) + "\n"
+    else:
+      stringOut = filename + " HAM " + str(pHamMsg) + "\n"
+    fileOut.write(stringOut)
+  
+  file.close()
+  fileOut.close()
   return
 
 def makeBag(dir, bag):
