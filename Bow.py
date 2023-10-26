@@ -17,7 +17,7 @@ class Bow:
       print("Created an empty bag of words")
       return
   
-    fp = open(file, encoding='latin-1')
+    fp = open(file, encoding='latin1')
 
     #tokenize
     for line in fp:
@@ -30,7 +30,7 @@ class Bow:
     #clean
     for idx in range(0,len(tokens)):
       if(tokens[idx] != ""):
-        tokens[idx] = re.sub('\W+',"",tokens[idx]).lower()
+        tokens[idx] = re.sub('[^0-9a-zA-Z]',"",tokens[idx]).lower()
     totalWords = len(tokens)
     tokens = sorted(tokens)
 

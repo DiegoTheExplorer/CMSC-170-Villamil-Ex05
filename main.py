@@ -34,7 +34,7 @@ def classify(kTxt, spam, ham, messages, msgsPath):
   print("Dictionary Size: " + str(spam.dictSize))
   print("Total Number of Words: " + str(spam.totalWords))
 
-  fileOut = open("classify.out", "a", encoding='latin-1')
+  fileOut = open("classify.out", "a", encoding='latin1')
   fileOut.truncate(0)
 
   k = int(kTxt.get(1.0, "end-1c"))
@@ -54,7 +54,7 @@ def classify(kTxt, spam, ham, messages, msgsPath):
   for filename in messages:
     #create a bag of words using words from path
     path = msgsPath.get() + "/" + filename
-    file = open(path, encoding='latin-1')
+    file = open(path, encoding='latin1')
     messageBow = bow.Bow(path)
 
     #get the number of new words
