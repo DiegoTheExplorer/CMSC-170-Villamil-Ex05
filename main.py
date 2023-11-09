@@ -101,13 +101,13 @@ def classify(kTxt, spam, ham, messages, msgsPath):
 
     pMsg = (pMsgHam * pHam) + (pMsgSpam * pSpam)#P(message)
 
-    pSpamMsg = (pMsgSpam * pSpam)/ (pMsgSpam + pMsgHam)
-    pHamMsg = (pMsgHam * pHam)/ (pMsgSpam + pMsgHam)
+    pSpamMsg = (pMsgSpam * pSpam)/ (pMsgSpam + pMsgHam)#P(Spam|message)
+    pHamMsg = (pMsgHam * pHam)/ (pMsgSpam + pMsgHam)#P(Ham|message)
 
     zeros = "0" * (3 - len(str(fileCtr)))
     fileNum = zeros + str(fileCtr)
 
-    if(pSpamMsg >= Decimal(0.5)):
+    if(pSpamMsg >= Decimal(0.5)):#If p(Spam|message) is above atleast 50% then the message is labeled as Spam
       stringOut = fileNum + " SPAM " + str(pSpamMsg) + "\n"
     else:
       stringOut = fileNum + " HAM " + str(pHamMsg) + "\n"
@@ -172,6 +172,8 @@ fileSelectSpam = tk.Button(root,
                            text="Select Spam Dir", 
                            command=partial(makeBag, spamDir, spamBow))
 fileSelectSpam.grid(row = 0, column = 0)
+spamFrame = tk.Frame(root)
+spamFrame.grid(row = 1, column = 0)
 
 hamDir = tk.StringVar()
 hamBow = bow.Bow(None)
@@ -179,6 +181,8 @@ fileSelectHam = tk.Button(root,
                            text="Select Ham Dir", 
                            command=partial(makeBag, hamDir, hamBow))
 fileSelectHam.grid(row = 0, column = 1)
+hamFrame = tk.Frame(root)
+hamFrame.grid(row = 1, column = 1)
 
 classifyDir = tk.StringVar()
 classifyFiles = []
