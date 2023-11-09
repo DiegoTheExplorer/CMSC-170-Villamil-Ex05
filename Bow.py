@@ -22,7 +22,7 @@ class Bow:
   def updateDict(self, file):
 
     if(file == None):
-      print("Created an empty bag of words")
+      #print("Created an empty bag of words")
       return
     
     tokens = []

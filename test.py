@@ -1,4 +1,7 @@
-import Bow as bow
+import numpy
+from decimal import *
 
-ham01 = bow.Bow("data/data01/ham")
+x = [Decimal(1),Decimal(2),Decimal(3),Decimal(4),Decimal(5)]
+
+print(numpy.prod(x))
 

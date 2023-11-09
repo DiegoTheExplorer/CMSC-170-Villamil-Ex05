@@ -9,6 +9,12 @@ import numpy
 from functools import partial
 from decimal import *
 
+def arrayProd(arr):
+  product = 1
+  for elem in arr:
+    product *= elem
+  return product
+
 def classify(kTxt, spam, ham, messages, msgsPath):
   missingDirectory = 0
 
@@ -38,8 +44,8 @@ def classify(kTxt, spam, ham, messages, msgsPath):
   fileOut.truncate(0)
 
   k = int(kTxt.get(1.0, "end-1c"))
-  pSpam = Decimal((spam.msgNum + k) / ((spam.msgNum + ham.msgNum) + 2 * k))
-  pHam = Decimal((ham.msgNum + k) / ((spam.msgNum + ham.msgNum) + 2 * k))
+  pSpam = Decimal((spam.msgNum + k) / ((spam.msgNum + ham.msgNum) + 2 * k))#P(Spam)
+  pHam = Decimal((ham.msgNum + k) / ((spam.msgNum + ham.msgNum) + 2 * k))#P(Ham)
 
   k = Decimal(k)
   dictSizeSpam = Decimal(spam.dictSize)
@@ -54,8 +60,13 @@ def classify(kTxt, spam, ham, messages, msgsPath):
   for key in ham.dict:
     if(key in dictSpamHam):
       dictSpamHam[key] = dictSpamHam[key] + ham.dict[key]
+    else:
+      dictSpamHam[key] = ham.dict[key]
 
   dictSize = len(dictSpamHam)
+  print("Combined Dictionary Size: ")
+  print(dictSize)
+  print("\n")
 
   for filename in messages:
     #create a bag of words using words from path
@@ -86,6 +97,8 @@ def classify(kTxt, spam, ham, messages, msgsPath):
         wordInSpam = Decimal(0)
       pWordSpam.append((wordInSpam + k) /
                         ((totalWordsSpam) + (k * (dictSize + newWordsD))))
+      # temp = "Number of " + word + " in Spam: " + str(wordInSpam) + "\n"
+      # print(temp)
       
       #calculate P(w|Ham) then append to pWordHam
       if(word in ham.dict):
@@ -94,6 +107,8 @@ def classify(kTxt, spam, ham, messages, msgsPath):
         wordInHam = Decimal(0)
       pWordHam.append((wordInHam + k) / 
                        ((totalWordsHam) + (k * (dictSize + newWordsD))))
+      # temp = "Number of " + word + " in Ham: " + str(wordInHam) + "\n"
+      # print(temp)
     
     #calculate P(message|Spam) and P(message|Ham)
     pMsgSpam = numpy.prod(pWordSpam)
@@ -101,8 +116,8 @@ def classify(kTxt, spam, ham, messages, msgsPath):
 
     pMsg = (pMsgHam * pHam) + (pMsgSpam * pSpam)#P(message)
 
-    pSpamMsg = (pMsgSpam * pSpam)/ (pMsgSpam + pMsgHam)#P(Spam|message)
-    pHamMsg = (pMsgHam * pHam)/ (pMsgSpam + pMsgHam)#P(Ham|message)
+    pSpamMsg = (pMsgSpam * pSpam)/ pMsg#P(Spam|message)
+    pHamMsg = 1 - (pMsgHam * pHam)/ pMsg#P(Ham|message)
 
     zeros = "0" * (3 - len(str(fileCtr)))
     fileNum = zeros + str(fileCtr)
@@ -154,7 +169,7 @@ def getFiles(dir, files):
   dir.set(path)
 
   #for every message filename in path append to files
-  for message in os.listdir(dir.get()):
+  for message in sorted(os.listdir(dir.get())):
      files.append(message)
 
   return
