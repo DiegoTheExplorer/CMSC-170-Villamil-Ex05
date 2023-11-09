@@ -23,14 +23,14 @@ makeBag(dir,bag)
 
 fp = open("ham01out.txt", "w")
 
-#write words
-for word in bag.dict:
-  tempStr = word + " " + str(bag.dict[word]) + "\n"
-  fp.write(tempStr)
-
 tempStr = "Dictionary Size: " + str(bag.dictSize) + "\n"
 fp.write(tempStr)
 tempStr = "Total Number of Words: " + str(bag.totalWords) + "\n"
 fp.write(tempStr)
+
+#write words
+for word in bag.dict:
+  tempStr = word + " " + str(bag.dict[word]) + "\n"
+  fp.write(tempStr)
 
 fp.close()
