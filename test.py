@@ -1,6 +1,4 @@
-from decimal import *
+import Bow as bow
 
-x = Decimal(34)
-y = Decimal(13)
+ham01 = bow.Bow("data/data01/ham")
 
-print(x / y)

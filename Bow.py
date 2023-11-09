@@ -9,6 +9,12 @@ class Bow:
     self.dictSize = 0
     self.updateDict(file)
 
+  def sortDict(self):
+    view = self.dict.items()
+    view = sorted(view)
+    self.dict = dict(view)
+    return
+
   def updateDict(self, file):
     tokens = []
     totalWords = 0
@@ -30,7 +36,7 @@ class Bow:
     #clean
     for idx in range(0,len(tokens)):
       if(tokens[idx] != ""):
-        tokens[idx] = re.sub('[^0-9a-zA-Z]',"",tokens[idx]).lower()
+        tokens[idx] = re.sub("[^0-9a-zA-Z]","",tokens[idx]).lower()
     totalWords = len(tokens)
     tokens = sorted(tokens)
 
@@ -42,7 +48,8 @@ class Bow:
         self.dict[tkn] += 1
       else:
         self.dict[tkn] = 1
-    
+
+    self.sortDict()
     self.totalWords = self.totalWords + totalWords
     self.dictSize = len(self.dict)
 
