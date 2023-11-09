@@ -18,10 +18,10 @@ def makeBag(dir, bag):
 
 
 bag = bow.Bow(None)
-dir = "data/data01/ham"
+dir = "data/data02/ham"
 makeBag(dir,bag)
 
-fp = open("ham01out.txt", "w")
+fp = open("ham02out.txt", "w")
 
 tempStr = "Dictionary Size: " + str(bag.dictSize) + "\n"
 fp.write(tempStr)

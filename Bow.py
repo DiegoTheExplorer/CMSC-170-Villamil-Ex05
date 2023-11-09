@@ -7,7 +7,11 @@ class Bow:
     self.dict = {}
     self.totalWords = 0
     self.dictSize = 0
+    self.msgNum = 0
     self.updateDict(file)
+
+  def empty(self):
+    self.__init__(None)
 
   def sortDict(self):
     view = self.dict.items()
@@ -52,5 +56,6 @@ class Bow:
     self.sortDict()
     self.totalWords = self.totalWords + totalWords
     self.dictSize = len(self.dict)
+    self.msgNum += 1
 
     return 
